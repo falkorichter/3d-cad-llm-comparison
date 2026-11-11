@@ -1,5 +1,6 @@
 ---
 # Install cadcraft-cli (the CADCraft MCP server binary) on macOS.
+# Note: CADCraft is 2D only (drafting, DXF/DWG), not 3D CAD.
 #
 #   ansible-playbook -i ansible/inventory.ini ansible/cadcraft-cli.yml
 #   # use an already-downloaded zip instead of fetching it:

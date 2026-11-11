@@ -18,16 +18,16 @@ that can look at what it built.
 |---|---|---|---|
 | OpenSCAD | Code-CAD (CSG mesh, no STEP) | Plain `.scad` files + CLI render | Baseline: open-mog, linear-actuator-crane |
 | [SolidCraft](https://github.com/tangency-labs/solidcraft) v0.30.1 (Tangency Labs) | Parametric 3D, B-rep, STEP/STL/3MF | `solidcraft-cli mcp` (stdio) | Registered in `.mcp.json`. Smoke-tested 2026-11-11: the MCP server starts and lists its tools |
-| [CADCraft](https://github.com/storytold/cadcraft) v0.19.0 (ArtCraft) | 2D drafting, DXF/DWG, no 3D yet | `cadcraft-cli mcp` (stdio) | Registered in `.mcp.json`; needs `cadcraft-cli` installed separately: **[install guide](docs/cadcraft-cli-install.md)**. **2D only**, so it's for drawings, not parts |
-| Onshape Labs FeatureScript MCP | Cloud parametric (FeatureScript) | Onshape App Store app | Subscribed; see [docs/onshape-mcp/LOG.md](docs/onshape-mcp/LOG.md) |
+| [CADCraft](https://github.com/storytold/cadcraft) v0.19.0 (ArtCraft) | **2D only**: drafting, DXF/DWG, no 3D modelling | `cadcraft-cli mcp` (stdio) | Registered in `.mcp.json`; needs `cadcraft-cli` installed separately: **[install guide](docs/cadcraft-cli-install.md)**. **2D only**, so it's for drawings, not parts |
+| Onshape Labs FeatureScript MCP | Cloud parametric (FeatureScript) | Remote MCP over HTTP + OAuth: `https://fs-mcp.labs.onshape.app/mcp` | Registered in `.mcp.json` (2026-11-11); authenticate via `/mcp`. See [docs/onshape-mcp/LOG.md](docs/onshape-mcp/LOG.md) |
 
-Both Craft apps were installed through the ArtCraft Launcher:
+Both Craft apps were installed through the ArtCraft Launcher. SolidCraft is the 3D one, and CADCraft is **2D only**:
 
 ![ArtCraft launcher with CADCraft and SolidCraft](docs/assets/2026-11-11-artcraft-launcher-installed.png)
 
 ## MCP setup (Claude Code)
 
-`.mcp.json` registers both servers for this project. Claude Code asks you to approve them the first
+`.mcp.json` registers all three servers for this project: two local stdio CLIs and the remote Onshape server. Claude Code asks you to approve them the first
 time it starts here; `/mcp` shows their status.
 
 ```json
@@ -35,11 +35,21 @@ time it starts here; `/mcp` shows their status.
   "mcpServers": {
     "solidcraft": {
       "command": "/Applications/SolidCraft.app/Contents/MacOS/solidcraft-cli",
-      "args": ["mcp", "--allow-path", "/Users/falkorichter/Documents/workspaces/open_source/llm_cad"]
+      "args": [
+        "mcp",
+        "--allow-path",
+        "/Users/falkorichter/Documents/workspaces/open_source/llm_cad"
+      ]
     },
     "cadcraft": {
       "command": "/Users/falkorichter/.local/bin/cadcraft-cli",
-      "args": ["mcp"]
+      "args": [
+        "mcp"
+      ]
+    },
+    "onshape": {
+      "type": "http",
+      "url": "https://fs-mcp.labs.onshape.app/mcp"
     }
   }
 }
@@ -47,7 +57,8 @@ time it starts here; `/mcp` shows their status.
 
 | Key | What it does |
 |---|---|
-| `mcpServers.<name>` | The server's name in Claude Code. Its tools appear as `mcp__solidcraft__*` and `mcp__cadcraft__*`. |
+| `mcpServers.<name>` | The server's name in Claude Code. Its tools appear as `mcp__solidcraft__*`, `mcp__cadcraft__*` and `mcp__onshape__*`. |
+| `onshape` → `type: "http"`, `url` | A remote MCP server (Streamable HTTP), so there's nothing to install. It uses OAuth: the first time, `/mcp` ▸ `onshape` ▸ *Authenticate* opens the Onshape login in the browser. |
 | `command` | The program Claude Code starts. It talks MCP over stdio (JSON-RPC on stdin/stdout). |
 | `solidcraft` → `command` | The `solidcraft-cli` inside the SolidCraft app bundle, by full path, so nothing else needs installing or adding to `PATH`. |
 | `solidcraft` → `--allow-path <dir>` | SolidCraft MCP only reads and writes files in its recovery and temp folders, and the folders of designs it opened or saved. This adds the repo, so the agent can save `.sc`, STEP and STL files here. Change it if you clone the repo somewhere else. `--allow-any-path` lifts the limit entirely. |
@@ -74,7 +85,11 @@ nothing else.
   ones. Check the version before sharing `.sc` files.
 - Docs: https://github.com/tangency-labs/solidcraft/blob/main/docs/mcp.md
 
-### CADCraft
+### CADCraft (2D only)
+> ⚠️ **CADCraft is 2D only.** It's AutoCAD-style 2D drafting (DXF/DWG). Despite the similar name, it isn't
+> a 3D CAD tool like SolidCraft: the project's own roadmap gives 3D modelling as 0% (checked v0.19.0,
+> 2026-11-11). Use it for drawings, not for modelling 3D-printable parts.
+
 > **Installing `cadcraft-cli`:** see [docs/cadcraft-cli-install.md](docs/cadcraft-cli-install.md). It isn't
 > in the app bundle or the launcher, only in the GitHub release assets.
 
@@ -106,9 +121,18 @@ mkdir -p ~/.local/bin && cp cadcraft-cli-0.19.0-macos-universal/cadcraft-cli ~/.
 ## Onshape Labs FeatureScript MCP
 
 Subscribed on 2026-11-11 (plan: "API limits apply"). Progress, screenshots and open questions are in
-[docs/onshape-mcp/LOG.md](docs/onshape-mcp/LOG.md). So far it shows up inside Onshape (the **+** menu,
-the context menu ▸ *Applications*, the right panel). We don't know yet whether Claude Code can connect
-to it from outside, so it's not in `.mcp.json`.
+[docs/onshape-mcp/LOG.md](docs/onshape-mcp/LOG.md). Inside Onshape it shows up in the **+** menu, the
+context menu ▸ *Applications* and the right panel. Claude Code can also reach it from outside, as a
+**remote MCP server**:
+
+- URL: `https://fs-mcp.labs.onshape.app/mcp`, transport **HTTP** (Streamable HTTP)
+- Auth: OAuth 2. Without a token the server answers `401` and points to
+  `/.well-known/oauth-protected-resource/mcp`. The authorization server is
+  `https://mcp-auth.labs.onshape.app`, with scopes `OAuth2Read`, `OAuth2Write`, `OAuth2Delete` and
+  `OAuth2ReadPII` (checked 2026-11-11).
+- Setup: it's in `.mcp.json` as `"onshape": {"type": "http", "url": "…"}`. Restart Claude Code, then
+  `/mcp` ▸ `onshape` ▸ *Authenticate*. Or add it by hand:
+  `claude mcp add --transport http --scope project onshape https://fs-mcp.labs.onshape.app/mcp`
 
 ## After changing `.mcp.json`
 
@@ -122,8 +146,11 @@ Restart Claude Code in this folder (or reconnect via `/mcp`) and approve the new
 
 ## Next steps
 
-- [ ] Install `cadcraft-cli` ([guide](docs/cadcraft-cli-install.md)) and check that `/mcp` shows both servers connected.
+- [x] Install `cadcraft-cli` ([guide](docs/cadcraft-cli-install.md)). Done on 2026-11-11; the stdio MCP check passes.
+- [ ] Check that `/mcp` shows both servers connected after a restart.
+- [ ] Optional: use CADCraft (2D) for a dimensioned drawing of a finished part, e.g. the GN frame.
 - [ ] Rebuild one simple part from open-mog or linear-actuator-crane in SolidCraft via MCP, export
       STEP + STL into this repo, and compare effort, quality and render with the OpenSCAD version.
-- [ ] Find out how an external client connects to the Onshape MCP (see the log).
+- [x] Find out how an external client connects to the Onshape MCP: remote HTTP + OAuth (see above).
+- [ ] Authenticate `onshape` via `/mcp` and list its tools.
 - [ ] Save the animated demo GIF from the Onshape App Store page into `docs/onshape-mcp/assets/`.

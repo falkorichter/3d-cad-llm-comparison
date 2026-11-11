@@ -1,5 +1,9 @@
 # Installing `cadcraft-cli` (macOS)
 
+> ⚠️ **CADCraft is 2D only.** It's AutoCAD-style 2D drafting (DXF/DWG). Despite the similar name, it isn't
+> a 3D CAD tool like SolidCraft: the project's own roadmap gives 3D modelling as 0% (checked v0.19.0,
+> 2026-11-11). Use it for drawings, not for modelling 3D-printable parts.
+
 The `cadcraft` MCP server in [`.mcp.json`](../.mcp.json) runs `~/.local/bin/cadcraft-cli`. Until that
 file exists, Claude Code reports:
 
