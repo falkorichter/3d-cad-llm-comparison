@@ -143,6 +143,15 @@ before the first real session and log the figures here.
 - Insight: the finished artifact is a plain `.fs` file. The MCP's value is the agent's **test loop**
   (compile + run + console output in real Onshape, without a human relaying errors), not delivery.
 
+## 2026-11-11: export end to end
+
+- The Onshape MCP has no export, so **Claude in Chrome** did it in the web UI: Export ▸ STL (download
+  at once) and STEP AP242 (async, "Export completed" in the bell, zip about 30 s later). Files and checks are in
+  [challenges/01-gn-holder/onshape/NOTES.md](../../challenges/01-gn-holder/onshape/NOTES.md).
+- API counter 36 → 38, about the cost of the `get_api_usage` check itself, so the browser export used no
+  measurable allocation.
+- The GIF recording of the export got lost (download didn't arrive; probably Chrome's multiple-downloads block).
+
 ## Next entries
 
 Add dated sections below (`## YYYY-MM-DD: …`), with screenshots in `assets/`.

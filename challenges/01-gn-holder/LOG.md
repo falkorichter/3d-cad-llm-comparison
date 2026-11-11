@@ -61,6 +61,9 @@
     tool's appended trojan feature). `put_featurescript` compiled the same code fine.
   - Limits: the MCP can't insert the feature into your own Part Studio, render, or export STL/STEP.
     Those steps are clicks in Onshape.
+  - **Export end to end**: Claude in Chrome clicked Part Studio ▸ Export in the web UI. 18 STL + 18 STEP
+    (AP242) are now in `onshape/stl` and `onshape/step`. All bboxes and volumes match the feature's own report
+    (total within 3 mm³). STEP is async: it arrives about 30 s later, after a bell notification. No measurable API cost.
   - Inserted into Part Studio 1 by hand (Search tools ▸ "GN Holder") and it worked first time: 18
     parts, all parameters in the dialog. Screenshot: [onshape/renders/part_studio_gn_holder.png](onshape/renders/part_studio_gn_holder.png).
 
@@ -70,7 +73,7 @@
 | Tool calls | ~42 | ~56 | 11 to Onshape (36 API requests) + ~10 local |
 | Corrections | 4 | 2 | 1 (helper rename) |
 | Model lives in | `.scad` file | `.sc` file | Onshape document (cloud) + `.fs` copy in the repo |
-| STEP | no | yes | yes, via Onshape export (manual) |
+| STEP | no | yes | yes, via Onshape web export (driven by Claude in Chrome) |
 | Verified by | own scripts | `measure`, `body_topology` | `println` report inside the feature |
 | Sees the result | renders | screenshots | **no**: numbers only, then a human screenshot from Onshape |
 

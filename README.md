@@ -162,5 +162,5 @@ the same first three steps in each.
 - [x] Authenticate `onshape` via `/mcp` and list its tools (2026-11-11, 14 tools, see the Onshape log).
 - [x] Build challenge 01 v1 with the Onshape MCP (2026-11-11, [notes](challenges/01-gn-holder/onshape/NOTES.md)).
 - [x] Insert the "GN Holder" feature into the Part Studio in Onshape and screenshot it (2026-11-11).
-- [ ] Export STL/STEP of the Onshape parts into `challenges/01-gn-holder/onshape/`.
+- [x] Export STL/STEP of the Onshape parts into `challenges/01-gn-holder/onshape/` (Claude in Chrome, 2026-11-11).
 - [ ] Save the animated demo GIF from the Onshape App Store page into `docs/onshape-mcp/assets/`.

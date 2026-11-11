@@ -29,7 +29,7 @@ paste-and-report round trips. On a harder feature, with more errors, the differe
 What the MCP **can't** do (as of 2026-11-11), so these stay manual either way:
 - add the feature to *your* Part Studio,
 - render or screenshot the result (the agent only gets numbers),
-- export STL/STEP.
+- export STL/STEP (a browser MCP like Claude in Chrome can do it through the web UI instead).
 
 ## Route A: copy-paste (no MCP, no API calls)
 
@@ -62,7 +62,11 @@ One-time setup: see [LOG.md](LOG.md) (`.mcp.json` entry, restart Claude Code, `/
    `create_feature_studio` + `put_featurescript` into your document.
 3. You: steps 6–9 of Route A (Part Studio ▸ Search tools ▸ ✓). With `put_featurescript` no *Commit*
    click was needed.
-4. You: a screenshot for the docs, and STL/STEP export (right-click a part ▸ *Export*).
+4. Export: the Onshape MCP can't, but **Claude in Chrome** (another MCP) can click it in your browser:
+   Part Studio tab ▸ right-click ▸ *Export…* ▸ STL or STEP, "Export unique parts as individual files".
+   STEP arrives later, after an "Export completed" notification. That's how challenge 01 got its files
+   ([details](../../challenges/01-gn-holder/onshape/NOTES.md#export-2026-11-11-driven-by-claude-in-chrome)).
+   Then check the STLs against the feature's `println` report.
 5. `get_api_usage` afterwards, and log the cost.
 
 ## Which one when

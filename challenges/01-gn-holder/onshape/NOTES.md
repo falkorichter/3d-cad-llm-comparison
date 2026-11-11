@@ -32,7 +32,8 @@ writes to a throwaway branch of the server's own working document). The last ste
 3. Press ✓ to accept the defaults.
 4. All 18 parts appear, named and coloured. Change any parameter in the feature dialog; everything rebuilds.
 
-STL/STEP export also happens in Onshape itself (right-click a part ▸ *Export*). The MCP has no export tool.
+STL/STEP export also happens in Onshape itself (right-click ▸ *Export*). The Onshape MCP has no export tool;
+see **Export** below for how it was done end to end with Claude in Chrome.
 
 ## Approach
 
@@ -76,6 +77,37 @@ square spigot, 8.6 mm socket, instead of 6 / 6.6).
 Not done yet: a parameter sweep (GN 2/3, `max_depth` 100) through `test_feature`. Each run costs
 API calls, and you can do it for free in the Onshape dialog.
 
+## Export (2026-11-11, driven by Claude in Chrome)
+
+The Onshape MCP has no export tool, so the export ran through a **second MCP, Claude in Chrome**, which
+clicks in the Onshape web UI in your browser:
+
+1. Part Studio tab ▸ right-click ▸ **Export…**
+2. **STL**: Binary, Millimeter, Resolution *Fine*, tick **Export unique parts as individual files**, file
+   name `gn_holder_onshape_stl` ▸ Export. The zip downloads at once.
+3. **STEP**: Format STEP (AP242, *Use latest version*), Millimeter, same tick, file name
+   `gn_holder_onshape_step` ▸ Export. **STEP is translated in the background.** Nothing downloads at first;
+   the bell shows "Export completed" and the zip arrives about 30 s later.
+4. Unzip, rename `Part Studio 1 - Corner +X+Y.stl` → `corner_pxpy.stl` (p/n for +/−), copy into `stl/` and `step/`.
+
+| Files | Count | Note |
+|---|---|---|
+| [`stl/`](stl/) | 18 (1.7 MB) | "unique parts" still gave **all 18**: identical parts (legs, plates) are not merged |
+| [`step/`](step/) | 18 (390 KB) | AP242 Edition 2, exact geometry (e.g. 4 `CYLINDRICAL_SURFACE` = insert holes in a rail) |
+
+**Check of the export against the feature report** (`../openscad/check_stl.py` + exact mesh volumes):
+every STL bbox matches (corner 151 × 173.5 × 20, rail 250 × 18 × 20, leg 30 × 30 × 172.5, divider
+16 × 326.4 × 18). Volumes: rail 78 679.3, corner 98 949.0, leg 148 684.5 mm³. The total over 18 STLs is
+1 356 580.8 vs. 1 356 577.8 in the B-rep report, so tessellation error is +3 mm³ overall. The divider shows "fits: NO"
+in `check_stl.py` only because that script checks straight placement; it fits diagonally.
+
+**API cost:** `get_api_usage` went from 36 to 38, which is about what that usage call itself costs. The browser
+export goes through the normal web session, not the OAuth app, so it didn't measurably use the allocation.
+
+**Not captured:** the GIF recording of the export (33 frames) said "downloaded" but never arrived in
+`~/Downloads`. Probably Chrome blocked a third automatic download from the same page. Next time, export
+the GIF before the CAD downloads, or allow multiple downloads for the extension.
+
 ## Problems and lessons
 
 1. **`test_feature` gave only "could not find Trojan feature spec: no features found"**, no line number.
@@ -105,5 +137,5 @@ API calls, and you can do it for free in the Onshape dialog.
 
 - [x] Inserted into Part Studio 1 and checked by eye (2026-11-11, screenshot above). Parts list shows the
   18 named parts, and the feature dialog shows every parameter with its default.
-- Export STLs/STEP from Onshape into `stl/` and `step/` for the comparison table.
+- [x] STL + STEP exported into `stl/` and `step/` (see Export above).
 - Same structural concerns as the other two v1 builds: rail sag under a full pan, untested tolerances.
