@@ -1,0 +1,112 @@
+---
+# Install cadcraft-cli (the CADCraft MCP server binary) on macOS.
+#
+#   ansible-playbook -i ansible/inventory.ini ansible/cadcraft-cli.yml
+#   # use an already-downloaded zip instead of fetching it:
+#   ansible-playbook -i ansible/inventory.ini ansible/cadcraft-cli.yml \
+#     -e cadcraft_cli_zip=~/Downloads/cadcraft-cli-0.19.0-macos-universal.zip
+#
+# Layout (idempotent, upgrade = bump the two vars below and rerun):
+#   ~/.local/share/cadcraft-cli/<version>/cadcraft-cli   unpacked release
+#   ~/.local/bin/cadcraft-cli -> the above               what .mcp.json runs
+# See docs/cadcraft-cli-install.md.
+
+- name: Install cadcraft-cli
+  hosts: local
+  gather_facts: false
+  vars:
+    cadcraft_version: "0.19.0"
+    # From the release's SHA256SUMS.txt.
+    cadcraft_cli_sha256: "6db9565a5fec6bacdfccbf62628a89e4430c9dbb5cc1eb85dbbef71e36e49da9"
+    cadcraft_team_id: "DJ6XS33FX8"
+
+    cadcraft_asset: "cadcraft-cli-{{ cadcraft_version }}-macos-universal"
+    cadcraft_url: "https://github.com/storytold/cadcraft/releases/download/v{{ cadcraft_version }}/{{ cadcraft_asset }}.zip"
+    cadcraft_cli_zip: ""   # optional local zip; empty = download
+    home: "{{ lookup('env', 'HOME') }}"
+    cache_dir: "{{ home }}/.cache/cadcraft-cli"
+    share_dir: "{{ home }}/.local/share/cadcraft-cli"
+    bin_dir: "{{ home }}/.local/bin"
+    install_dir: "{{ share_dir }}/{{ cadcraft_version }}"
+    binary: "{{ install_dir }}/{{ cadcraft_asset }}/cadcraft-cli"
+
+  tasks:
+    - name: Directories exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+      loop: ["{{ cache_dir }}", "{{ share_dir }}", "{{ install_dir }}", "{{ bin_dir }}"]
+
+    - name: Use the local zip if one was given
+      ansible.builtin.set_fact:
+        zip_path: "{{ cadcraft_cli_zip | expanduser }}"
+      when: cadcraft_cli_zip | length > 0
+
+    - name: Download the release zip (checksum-verified)
+      ansible.builtin.get_url:
+        url: "{{ cadcraft_url }}"
+        dest: "{{ cache_dir }}/{{ cadcraft_asset }}.zip"
+        checksum: "sha256:{{ cadcraft_cli_sha256 }}"
+        mode: "0644"
+      when: zip_path is not defined
+
+    - name: Default zip path is the download
+      ansible.builtin.set_fact:
+        zip_path: "{{ cache_dir }}/{{ cadcraft_asset }}.zip"
+      when: zip_path is not defined
+
+    - name: Checksum the zip
+      ansible.builtin.stat:
+        path: "{{ zip_path }}"
+        checksum_algorithm: sha256
+      register: zip_stat
+
+    - name: Zip matches the published SHA-256
+      ansible.builtin.assert:
+        that:
+          - zip_stat.stat.exists
+          - zip_stat.stat.checksum == cadcraft_cli_sha256
+        fail_msg: "{{ zip_path }}: sha256 {{ zip_stat.stat.checksum | default('missing') }} != {{ cadcraft_cli_sha256 }}"
+        quiet: true
+
+    - name: Unpack into the versioned directory
+      ansible.builtin.unarchive:
+        src: "{{ zip_path }}"
+        dest: "{{ install_dir }}"
+        remote_src: true
+        creates: "{{ binary }}"
+
+    - name: Binary is executable
+      ansible.builtin.file:
+        path: "{{ binary }}"
+        mode: "0755"
+
+    - name: Code signature is valid and from the expected team
+      ansible.builtin.shell: |
+        set -eu
+        codesign --verify --strict "{{ binary }}"
+        codesign -dv "{{ binary }}" 2>&1 | grep -qx "TeamIdentifier={{ cadcraft_team_id }}"
+      changed_when: false
+
+    - name: Strip quarantine from the unpacked binary, if any
+      ansible.builtin.command: xattr -d com.apple.quarantine "{{ binary }}"
+      register: xattr_out
+      changed_when: xattr_out.rc == 0
+      failed_when: false
+
+    - name: Link ~/.local/bin/cadcraft-cli to this version
+      ansible.builtin.file:
+        src: "{{ binary }}"
+        dest: "{{ bin_dir }}/cadcraft-cli"
+        state: link
+        force: true
+
+    - name: Smoke test
+      ansible.builtin.command: "{{ bin_dir }}/cadcraft-cli --help"
+      register: smoke
+      changed_when: false
+
+    - name: Report
+      ansible.builtin.debug:
+        msg: "cadcraft-cli {{ cadcraft_version }} -> {{ bin_dir }}/cadcraft-cli ({{ smoke.stdout_lines | first | default('') }})"

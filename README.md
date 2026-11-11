@@ -91,8 +91,11 @@ unzip -q cadcraft-cli-0.19.0-macos-universal.zip
 mkdir -p ~/.local/bin && cp cadcraft-cli-0.19.0-macos-universal/cadcraft-cli ~/.local/bin/
 ```
 
-- Tools: `command_line`, `execute`, `inspect_drawing`, `query_entities` and `render` (PNG).
-  When bridged to the app it adds `screenshot` and `ui_click`.
+- Install or upgrade with Ansible: `ansible-playbook -i ansible/inventory.ini ansible/cadcraft-cli.yml`
+  (see the [guide](docs/cadcraft-cli-install.md)). Installed 0.19.0 on 2026-11-11.
+- Tools (0.19.0, headless): `command_line`, `script`, `execute`, `list_commands`, `inspect_drawing`,
+  `query_entities`, `render` (PNG), `find_text`, `new_drawing`, `open`, `save` and `cancel`.
+  The project's docs say that bridged to the app it adds `screenshot` and `ui_click` (not tried yet).
 - Bridged mode: start the app with `--control 7979` and use `cadcraft-cli mcp --connect 127.0.0.1:7979`.
 - Without MCP: `cadcraft-cli run … --export out.png`, `cadcraft-cli info drawing.dxf` and
   `cadcraft-cli convert drawing.dxf drawing.svg`.
