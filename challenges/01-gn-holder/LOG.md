@@ -50,5 +50,29 @@
 | Parametric `layout` | list of fractions plus an assert | 0/1 flags (no `if` in expressions) |
 | Tool problems | old 2021.01 build, no Manifold | `solid.hole` position bug, no way to split disjoint bodies |
 
+- **Onshape FeatureScript v1 done** (Claude Code in the main session, not an agent; ~20 min to the
+  feature in the document, ~30 with notes). Details in [onshape/NOTES.md](onshape/NOTES.md).
+  - One custom feature **"GN Holder"** in Feature Studio "GN Holder (MCP)" in the challenge document.
+    18 parts, the same joints as SolidCraft (M4 splice plates + inserts), and `layout` as a real enum.
+  - Checked with `println` output from `test_feature`: outer 552 × 347, opening 532 × 327, hole 516 × 311,
+    clearance 165. **The middle rail is 78 679.0 mm³, vs. 78 679.3 in SolidCraft**: two different kernels agree.
+  - 11 Onshape tool calls = **36 API requests** (of 2,500/year). 1 correction: `test_feature` failed
+    with a bare "no features found" until the helper functions were renamed (probably a name clash with the
+    tool's appended trojan feature). `put_featurescript` compiled the same code fine.
+  - Limits: the MCP can't insert the feature into your own Part Studio, render, or export STL/STEP.
+    Those steps are clicks in Onshape.
+  - Inserted into Part Studio 1 by hand (Search tools ▸ "GN Holder") and it worked first time: 18
+    parts, all parameters in the dialog. Screenshot: [onshape/renders/part_studio_gn_holder.png](onshape/renders/part_studio_gn_holder.png).
+
+| | OpenSCAD | SolidCraft (MCP) | Onshape FeatureScript (MCP) |
+|---|---|---|---|
+| Time | ~15 min | ~15 min | ~20 min (+10 notes) |
+| Tool calls | ~42 | ~56 | 11 to Onshape (36 API requests) + ~10 local |
+| Corrections | 4 | 2 | 1 (helper rename) |
+| Model lives in | `.scad` file | `.sc` file | Onshape document (cloud) + `.fs` copy in the repo |
+| STEP | no | yes | yes, via Onshape export (manual) |
+| Verified by | own scripts | `measure`, `body_topology` | `println` report inside the feature |
+| Sees the result | renders | screenshots | **no**: numbers only, then a human screenshot from Onshape |
+
 Both say the long rails will sag under a full pan, and neither has been printed. The tolerances are guesses.
 - [ ] v2 brief from REQUIREMENTS.md §3 (tilted rack), then rebuild.

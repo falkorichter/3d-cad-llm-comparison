@@ -142,7 +142,7 @@ Restart Claude Code in this folder (or reconnect via `/mcp`) and approve the new
 
 | # | Challenge | Status |
 |---|---|---|
-| 01 | [GN container holder](challenges/01-gn-holder/README.md): 3D-printable, parametric holder for gastronorm pans. [Requirements](challenges/01-gn-holder/REQUIREMENTS.md) | v1 (flat frame) built in OpenSCAD + SolidCraft, [comparison](challenges/01-gn-holder/LOG.md); v2 (tilted rack) open |
+| 01 | [GN container holder](challenges/01-gn-holder/README.md): 3D-printable, parametric holder for gastronorm pans. [Requirements](challenges/01-gn-holder/REQUIREMENTS.md) | v1 (flat frame) built in OpenSCAD, SolidCraft and Onshape FeatureScript, [comparison](challenges/01-gn-holder/LOG.md); v2 (tilted rack) open |
 
 ## Next steps
 
@@ -153,4 +153,7 @@ Restart Claude Code in this folder (or reconnect via `/mcp`) and approve the new
       STEP + STL into this repo, and compare effort, quality and render with the OpenSCAD version.
 - [x] Find out how an external client connects to the Onshape MCP: remote HTTP + OAuth (see above).
 - [x] Authenticate `onshape` via `/mcp` and list its tools (2026-11-11, 14 tools, see the Onshape log).
+- [x] Build challenge 01 v1 with the Onshape MCP (2026-11-11, [notes](challenges/01-gn-holder/onshape/NOTES.md)).
+- [x] Insert the "GN Holder" feature into the Part Studio in Onshape and screenshot it (2026-11-11).
+- [ ] Export STL/STEP of the Onshape parts into `challenges/01-gn-holder/onshape/`.
 - [ ] Save the animated demo GIF from the Onshape App Store page into `docs/onshape-mcp/assets/`.

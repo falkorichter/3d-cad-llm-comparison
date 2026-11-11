@@ -134,9 +134,26 @@ before the first real session and log the figures here.
 - That's about 200 calls a month. A FeatureScript session that iterates with `test_feature` can
   easily burn dozens, so: test small snippets, search the docs (also an API call!) sparingly, and log
   `get_api_usage` after each session to learn what a typical part costs.
-- [ ] First real task: the GN holder corner as a FeatureScript feature (challenge 01), compared with
-      the OpenSCAD and SolidCraft builds.
+- [x] First real task: the GN holder as a FeatureScript feature (challenge 01), see 2026-11-11: first build.
 
 ## Next entries
 
 Add dated sections below (`## YYYY-MM-DD: …`), with screenshots in `assets/`.
+
+## 2026-11-11: first build (challenge 01, GN holder)
+
+Full write-up: [challenges/01-gn-holder/onshape/NOTES.md](../../challenges/01-gn-holder/onshape/NOTES.md).
+
+- Workflow that worked: `read_featurescript_notes` → `test_featurescript` (trivial lambda, gives
+  `libraryVersion` **3112**) → write the feature locally → `test_feature` until the console report is right →
+  `create_feature_studio` + `put_featurescript` into the target document.
+- **Gotcha:** `test_feature` answered "could not find Trojan feature spec: no features found" (no line
+  number) while `put_featurescript` compiled the same code fine. Renaming generic helper functions
+  (`box`, `cyl`, `lo`, …) to prefixed names fixed it.
+- **Gotcha:** no tool adds a feature to *your* Part Studio, and there's no render or export. The final
+  insert, the visual check and the STL/STEP export are done by hand in Onshape.
+- `edit_featurescript_notes` created an Onshape document **"FeatureScript MCP Notes"** in the account, the
+  server's "memory document". Lessons from this build are in it.
+- Inserting it by hand: Part Studio tab ▸ Search tools (Alt/⌥ + C) ▸ "GN Holder" ▸ ✓. It worked
+  first time, without a *Commit* in the Feature Studio.
+- Cost: **36 API requests** for 11 tool calls (`get_api_usage` afterwards). 2,464 left until 2027-10-12.
