@@ -14,5 +14,16 @@
   requirements just before starting agents.
 - Onshape: MCP endpoint found (HTTP + OAuth) and registered; login still to do. CADCraft is out
   because it's 2D only.
-- [ ] Record the agent results (time, tool calls, corrections, bed-fit, issues) here when they finish.
+- **SolidCraft v1 done** (agent, 08:39–08:50 tool time, ~15 min total; ~56 tool calls, ~30 of them
+  to SolidCraft; 2 corrections, no rebuild from scratch). Details in [solidcraft/NOTES.md](solidcraft/NOTES.md).
+  - 18 bodies / 6 part types (corner A and B, middle rail, splice plate, leg, divider). Every part fits
+    256 × 256; the 326 mm divider only fits diagonally. M4 screws and recessed splice plates, no supports.
+  - Measured outer 552 × 347, opening 532 × 327, through-hole 516 × 311, 165 mm clearance. All match the
+    brief. Volumes match the hand calculation; switching to GN 2/3 and `max_depth` = 100 rebuilds cleanly.
+  - **SolidCraft bug:** `solid.hole` with an expression position does not follow parameters (it rebuilds
+    from frozen numbers). Worked around with `solid.cylinder` cuts.
+  - **Limits:** no command to split a body that has two disjoint pieces; no `if` in expressions (the
+    layout became 0/1 flags); automatic body names like "Frame (1) (1) (1)"; `solid.move` rotation has
+    no pivot. No crashes.
+- [ ] OpenSCAD v1 result: still running.
 - [ ] v2 brief from REQUIREMENTS.md §3 (tilted rack), then rebuild.

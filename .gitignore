@@ -1,0 +1,6 @@
+.DS_Store
+__pycache__/
+*.pyc
+# SolidCraft lock and backup files
+.~*.lock
+*.sc.bak
