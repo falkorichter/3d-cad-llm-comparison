@@ -104,9 +104,15 @@ in `check_stl.py` only because that script checks straight placement; it fits di
 **API cost:** `get_api_usage` went from 36 to 38, which is about what that usage call itself costs. The browser
 export goes through the normal web session, not the OAuth app, so it didn't measurably use the allocation.
 
-**Not captured:** the GIF recording of the export (33 frames) said "downloaded" but never arrived in
-`~/Downloads`. Probably Chrome blocked a third automatic download from the same page. Next time, export
-the GIF before the CAD downloads, or allow multiple downloads for the extension.
+![Recording: Part Studio tab ▸ right-click ▸ Export… ▸ STEP settings ▸ file name](renders/onshape_export_dialog.gif)
+
+*Recorded with Claude in Chrome's GIF tool (9 frames, header with the account name cropped). It ends at
+the filled-in dialog and was cancelled there, so no extra CAD download happened (see the GIF lesson below).*
+
+**GIF lesson:** the first recording (33 frames, the full export) said "downloaded" but never arrived. It
+was the **third automatic download** from the page, after the STL and STEP zips, and Chrome probably
+blocked it. Fix that worked: record a second run, stop before the final *Export* click, and export
+the GIF as the **only** download. It arrived at once (2 MB, now cropped and shrunk to 1 MB).
 
 ## Problems and lessons
 

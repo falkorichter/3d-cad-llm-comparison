@@ -151,6 +151,8 @@ before the first real session and log the figures here.
 - API counter 36 → 38, about the cost of the `get_api_usage` check itself, so the browser export used no
   measurable allocation.
 - The GIF recording of the export got lost (download didn't arrive; probably Chrome's multiple-downloads block).
+  Retried: recorded the dialog again, cancelled before *Export*, and exported the GIF as the only download.
+  It arrived. Lesson: **with Claude in Chrome, export the GIF before (or instead of) other downloads.**
 
 ## Next entries
 
