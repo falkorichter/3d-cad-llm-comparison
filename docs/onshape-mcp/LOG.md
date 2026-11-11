@@ -136,6 +136,13 @@ before the first real session and log the figures here.
   `get_api_usage` after each session to learn what a typical part costs.
 - [x] First real task: the GN holder as a FeatureScript feature (challenge 01), see 2026-11-11: first build.
 
+## 2026-11-11: how-to, and what the MCP is actually for
+
+- Wrote [HOWTO.md](HOWTO.md): Route A, paste a `.fs` into a Feature Studio (no MCP, no API calls),
+  and Route B, the MCP workflow.
+- Insight: the finished artifact is a plain `.fs` file. The MCP's value is the agent's **test loop**
+  (compile + run + console output in real Onshape, without a human relaying errors), not delivery.
+
 ## Next entries
 
 Add dated sections below (`## YYYY-MM-DD: …`), with screenshots in `assets/`.

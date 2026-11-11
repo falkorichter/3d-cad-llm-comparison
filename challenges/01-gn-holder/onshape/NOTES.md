@@ -19,6 +19,9 @@ empty seat at the 1/2 position and the leg-bolt counterbores in the corners are 
 | The Part Studio it is meant for | `eid 8e498bbfbd31eb26c783ac7d` in the same document |
 | Server-side lessons | Onshape document "FeatureScript MCP Notes" (made by `edit_featurescript_notes`) |
 
+**Step-by-step (copy-paste or MCP): [docs/onshape-mcp/HOWTO.md](../../../docs/onshape-mcp/HOWTO.md).** Short version: anyone can paste
+`gn_holder.fs` into a Feature Studio; the MCP was only needed to *develop* it (compile, run, check).
+
 **The result is a custom feature, not a model.** The server writes FeatureScript into a Feature Studio
 and tests it. It has **no tool to add a feature to your own Part Studio** (`create_geometry` only
 writes to a throwaway branch of the server's own working document). The last step is manual:

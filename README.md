@@ -120,7 +120,8 @@ mkdir -p ~/.local/bin && cp cadcraft-cli-0.19.0-macos-universal/cadcraft-cli ~/.
 
 ## Onshape Labs FeatureScript MCP
 
-Subscribed on 2026-11-11 (plan: "API limits apply"). Progress, screenshots and open questions are in
+Subscribed on 2026-11-11 (plan: "API limits apply"). **How to use a `.fs` file, with or without the MCP:
+[docs/onshape-mcp/HOWTO.md](docs/onshape-mcp/HOWTO.md).** Progress, screenshots and open questions are in
 [docs/onshape-mcp/LOG.md](docs/onshape-mcp/LOG.md). Inside Onshape it shows up in the **+** menu, the
 context menu ▸ *Applications* and the right panel. Claude Code can also reach it from outside, as a
 **remote MCP server**:
