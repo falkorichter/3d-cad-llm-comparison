@@ -139,6 +139,12 @@ context menu ▸ *Applications* and the right panel. Claude Code can also reach 
 
 Restart Claude Code in this folder (or reconnect via `/mcp`) and approve the new servers when asked.
 
+## How the tools differ
+
+[docs/featurescript-openscad-solidcraft.md](docs/featurescript-openscad-solidcraft.md): OpenSCAD and FeatureScript are
+programs that generate a model; SolidCraft stores a feature tree that the agent built with commands. With
+the same first three steps in each.
+
 ## Challenges
 
 | # | Challenge | Status |
