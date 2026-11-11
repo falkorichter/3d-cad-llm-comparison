@@ -19,7 +19,7 @@ that can look at what it built.
 | OpenSCAD | Code-CAD (CSG mesh, no STEP) | Plain `.scad` files + CLI render | Baseline: open-mog, linear-actuator-crane |
 | [SolidCraft](https://github.com/tangency-labs/solidcraft) v0.30.1 (Tangency Labs) | Parametric 3D, B-rep, STEP/STL/3MF | `solidcraft-cli mcp` (stdio) | Registered in `.mcp.json`. Smoke-tested 2026-11-11: the MCP server starts and lists its tools |
 | [CADCraft](https://github.com/storytold/cadcraft) v0.19.0 (ArtCraft) | **2D only**: drafting, DXF/DWG, no 3D modelling | `cadcraft-cli mcp` (stdio) | Registered in `.mcp.json`; needs `cadcraft-cli` installed separately: **[install guide](docs/cadcraft-cli-install.md)**. **2D only**, so it's for drawings, not parts |
-| Onshape Labs FeatureScript MCP | Cloud parametric (FeatureScript) | Remote MCP over HTTP + OAuth: `https://fs-mcp.labs.onshape.app/mcp` | Registered in `.mcp.json` (2026-11-11); authenticate via `/mcp`. See [docs/onshape-mcp/LOG.md](docs/onshape-mcp/LOG.md) |
+| Onshape Labs FeatureScript MCP | Cloud parametric (FeatureScript) | Remote MCP over HTTP + OAuth: `https://fs-mcp.labs.onshape.app/mcp` | Registered in `.mcp.json` and authenticated (2026-11-11), 14 tools. See [docs/onshape-mcp/LOG.md](docs/onshape-mcp/LOG.md) |
 
 Both Craft apps were installed through the ArtCraft Launcher. SolidCraft is the 3D one, and CADCraft is **2D only**:
 
@@ -152,5 +152,5 @@ Restart Claude Code in this folder (or reconnect via `/mcp`) and approve the new
 - [ ] Rebuild one simple part from open-mog or linear-actuator-crane in SolidCraft via MCP, export
       STEP + STL into this repo, and compare effort, quality and render with the OpenSCAD version.
 - [x] Find out how an external client connects to the Onshape MCP: remote HTTP + OAuth (see above).
-- [ ] Authenticate `onshape` via `/mcp` and list its tools.
+- [x] Authenticate `onshape` via `/mcp` and list its tools (2026-11-11, 14 tools, see the Onshape log).
 - [ ] Save the animated demo GIF from the Onshape App Store page into `docs/onshape-mcp/assets/`.

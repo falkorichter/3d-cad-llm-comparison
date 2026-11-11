@@ -42,8 +42,8 @@ Source: https://www.onshape.com/en/blog/featurescript-mcp-server-enables-text-co
 ### Open questions
 - [x] How does an external MCP client connect? → remote HTTP MCP, URL above.
 - [x] How does auth work in Claude Code? Standard MCP OAuth (see 2026-11-11: remote MCP endpoint).
-      Login itself not done yet.
-- [ ] What do "API limits apply" mean in numbers (calls per month on our plan)?
+      Login done 2026-11-11 (three browser steps, see below).
+- [x] What do "API limits apply" mean in numbers? → 2,500 calls **per year**, no overage (see 2026-11-11: authenticated).
 - [ ] Which tools does it expose? Can it write FeatureScript only, or also read the part studio and
       export STL/STEP?
 - [ ] First test: rebuild a simple open-mog or linear-actuator-crane part and compare it with the
@@ -61,7 +61,81 @@ Source: https://www.onshape.com/en/blog/featurescript-mcp-server-enables-text-co
 - Added to `.mcp.json` as `"onshape": {"type": "http", "url": "https://fs-mcp.labs.onshape.app/mcp"}`.
 - Gotcha: it didn't show up in `/mcp` at first, because Claude Code reads `.mcp.json` from the
   folder it starts in, and only at startup. The entry was on a branch, not in the checkout in use.
-- [ ] Next: restart Claude Code, `/mcp` ▸ `onshape` ▸ *Authenticate*, then record the tool list here.
+- [x] Next: restart Claude Code, `/mcp` ▸ `onshape` ▸ *Authenticate*, then record the tool list here
+      (done, see 2026-11-11: authenticated).
+
+## 2026-11-11: authenticated, tool list
+
+**Gotcha: restart first.** `/mcp` only picked up `onshape` after Claude Code was restarted in the main
+checkout (it reads `.mcp.json` once, at startup). After that, `/mcp` ▸ `onshape` ▸ *Authenticate* ran
+the whole login and printed `Authentication successful. Connected to onshape.`
+
+The login goes through **two** consent screens, because there are two OAuth layers:
+
+1. **Onshape** (`oauth.onshape.com`): "Onshape Labs FeatureScript MCP by PTC Inc." asks for your
+   Onshape account. Permissions: read profile, read documents, **write** documents, **delete**
+   documents and workspaces. The card says it can create and modify Feature Studios, create a
+   *memory document* and a *working document*, and delete workspaces from the working document.
+   You can limit it to single documents later under My account ▸ Applications.
+
+   ![Onshape: authorize application](assets/2026-11-11-oauth-1-onshape-authorize.png)
+
+2. **The MCP auth server** (`mcp-auth.labs.onshape.app`): "Authorize Claude Code (onshape)?"
+   lets Claude Code use `https://fs-mcp.labs.onshape.app/mcp` and redirects to `localhost:<port>`.
+   Only asked once per client.
+
+   ![MCP auth: allow Claude Code](assets/2026-11-11-oauth-2-mcp-auth-allow.png)
+
+3. Claude Code's local callback page: "Authentication successful".
+
+   ![Claude Code: authentication successful](assets/2026-11-11-oauth-3-success.png)
+
+(Screenshots: account email and one-time `code`/`state` values blacked out.)
+
+### Tools (14, `mcp__onshape__*`)
+
+Read from the tool schemas, so no API calls spent yet.
+
+| Tool | What it does |
+|---|---|
+| `whoami` | Which Onshape user/company the session acts as, and whose API allocation is used |
+| `get_api_usage` | Used / limit / remaining API calls for the current cycle |
+| `set_api_allocation` | Switch between personal and a Pro company's allocation (only on explicit request) |
+| `logout` | Sign out (needs `confirm: true`) |
+| `search_featurescript_documentation` | Search the FeatureScript docs |
+| `read_featurescript_notes` / `edit_featurescript_notes` | A persistent notes file of lessons learned (the "memory document"). The server tells the agent to read it before writing code and add to it after fixing errors |
+| `test_featurescript` | Run a FeatureScript **lambda** snippet in a Part Studio. A trivial snippet returns `libraryVersion`, the version to put in the header of new code |
+| `test_feature` | Compile + run a full `defineFeature` in a real Feature Studio (via a "trojan" no-op feature) |
+| `create_geometry` | Write the feature into a **new branched workspace** and add it to the Part Studio. `clean: true` (default) deletes the branch afterwards. Does **not** return code errors: test first |
+| `list_feature_studios` / `get_featurescript` / `create_feature_studio` / `put_featurescript` | Work with Feature Studios in a document you name (`did`, `wid`, `eid`). `put_featurescript` overwrites the whole studio, meant for the final write |
+
+What this answers from the open questions:
+- It **writes and tests FeatureScript**; it does not read arbitrary part studios and has **no STL/STEP
+  export** tool. Getting a mesh out means exporting in Onshape itself (or via the REST API).
+- Feature parameters need **defaults** in `defineFeature(..., { … })`, otherwise "Precondition failed".
+- Wrong version header in new code → "no features found". Always ask `test_featurescript` for the
+  live version first.
+
+### API allocation
+
+Every tool call (including `whoami`) costs calls from the Onshape API allocation of our plan. When
+it's used up, requests fail until the next cycle. `get_api_usage` reports the numbers, which should
+answer the open question "what do API limits mean in numbers". Plan: call `get_api_usage` once
+before the first real session and log the figures here.
+
+- [x] Run `whoami` + `get_api_usage`, log the allocation numbers (below).
+
+**Numbers (2026-11-11, first two calls):**
+- `whoami`: the expected personal account, `consumingFrom: "self"` (personal allocation, no company).
+- `get_api_usage`: **2,500 requests per cycle, and the cycle is a whole year**
+  (2026-10-12 → 2027-10-12). Overage is **off**, so at 2,500 calls the server simply stops working
+  until October 2027. It reported `used: 0` right after the `whoami` call, so either `whoami` is
+  free or the counter lags. Check again after the first session.
+- That's about 200 calls a month. A FeatureScript session that iterates with `test_feature` can
+  easily burn dozens, so: test small snippets, search the docs (also an API call!) sparingly, and log
+  `get_api_usage` after each session to learn what a typical part costs.
+- [ ] First real task: the GN holder corner as a FeatureScript feature (challenge 01), compared with
+      the OpenSCAD and SolidCraft builds.
 
 ## Next entries
 
