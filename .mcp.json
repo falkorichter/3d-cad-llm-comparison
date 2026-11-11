@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "solidcraft": {
+      "command": "/Applications/SolidCraft.app/Contents/MacOS/solidcraft-cli",
+      "args": ["mcp", "--allow-path", "/Users/falkorichter/Documents/workspaces/open_source/llm_cad"]
+    },
+    "cadcraft": {
+      "command": "/Users/falkorichter/.local/bin/cadcraft-cli",
+      "args": ["mcp"]
+    }
+  }
+}
