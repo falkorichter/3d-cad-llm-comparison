@@ -142,7 +142,7 @@ Restart Claude Code in this folder (or reconnect via `/mcp`) and approve the new
 
 | # | Challenge | Status |
 |---|---|---|
-| 01 | [GN container holder](challenges/01-gn-holder/README.md): 3D-printable, parametric holder for gastronorm pans. [Requirements](challenges/01-gn-holder/REQUIREMENTS.md) | research |
+| 01 | [GN container holder](challenges/01-gn-holder/README.md): 3D-printable, parametric holder for gastronorm pans. [Requirements](challenges/01-gn-holder/REQUIREMENTS.md) | v1 (flat frame) built in OpenSCAD + SolidCraft, [comparison](challenges/01-gn-holder/LOG.md); v2 (tilted rack) open |
 
 ## Next steps
 

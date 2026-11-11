@@ -30,8 +30,8 @@ The customer will supply the measurements. Until then the parameters use the nom
 
 | Toolchain | Folder | Status |
 |---|---|---|
-| OpenSCAD (baseline) | `openscad/` | v1 in progress (agent, 2026-11-11). Built to [DESIGN.md](DESIGN.md) v1, a flat 1/1 frame; see [LOG.md](LOG.md) |
-| SolidCraft via MCP | `solidcraft/` | v1 in progress (agent, 2026-11-11). Built to [DESIGN.md](DESIGN.md) v1, a flat 1/1 frame; see [LOG.md](LOG.md) |
+| OpenSCAD (baseline) | `openscad/` | **v1 done** (2026-11-11): flat 1/1 frame, 14 parts, dovetails, STL only. See [LOG.md](LOG.md) |
+| SolidCraft via MCP | `solidcraft/` | **v1 done** (2026-11-11): flat 1/1 frame, 18 parts, M4 splice plates, STEP + STL. See [LOG.md](LOG.md) |
 | Onshape FeatureScript MCP | `onshape/` | not started. MCP registered (HTTP + OAuth); authenticate via `/mcp` first |
 | CADCraft | none | **not applicable**: CADCraft is 2D only. Could later make a dimensioned drawing of the result |
 
