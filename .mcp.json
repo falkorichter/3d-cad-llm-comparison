@@ -17,6 +17,12 @@
     "onshape": {
       "type": "http",
       "url": "https://fs-mcp.labs.onshape.app/mcp"
+    },
+    "freecad": {
+      "command": "/opt/homebrew/bin/uvx",
+      "args": [
+        "freecad-mcp@0.1.32"
+      ]
     }
   }
 }

@@ -20,6 +20,7 @@ that can look at what it built.
 | [SolidCraft](https://github.com/tangency-labs/solidcraft) v0.30.1 (Tangency Labs) | Parametric 3D, B-rep, STEP/STL/3MF | `solidcraft-cli mcp` (stdio) | Registered in `.mcp.json`. Smoke-tested 2026-11-11: the MCP server starts and lists its tools |
 | [CADCraft](https://github.com/storytold/cadcraft) v0.19.0 (ArtCraft) | **2D only**: drafting, DXF/DWG, no 3D modelling | `cadcraft-cli mcp` (stdio) | Registered in `.mcp.json`; needs `cadcraft-cli` installed separately: **[install guide](docs/cadcraft-cli-install.md)**. **2D only**, so it's for drawings, not parts |
 | Onshape Labs FeatureScript MCP | Cloud parametric (FeatureScript) | Remote MCP over HTTP + OAuth: `https://fs-mcp.labs.onshape.app/mcp` | Registered in `.mcp.json` and authenticated (2026-11-11), 14 tools. See [docs/onshape-mcp/LOG.md](docs/onshape-mcp/LOG.md) |
+| FreeCAD 1.1.4 + [neka-nat/freecad-mcp](https://github.com/neka-nat/freecad-mcp) 0.1.32 | Parametric B-rep (OpenCASCADE), STEP/STL | Community addon (XML-RPC in the FreeCAD GUI) + `uvx freecad-mcp` (stdio) | Installed 2026-11-25 (18 tools, FreeCAD must be open); challenge 01 v1 built with it. See [docs/freecad-mcp/LOG.md](docs/freecad-mcp/LOG.md) |
 
 Both Craft apps were installed through the ArtCraft Launcher. SolidCraft is the 3D one, and CADCraft is **2D only**:
 
@@ -50,6 +51,10 @@ time it starts here; `/mcp` shows their status.
     "onshape": {
       "type": "http",
       "url": "https://fs-mcp.labs.onshape.app/mcp"
+    },
+    "freecad": {
+      "command": "/opt/homebrew/bin/uvx",
+      "args": ["freecad-mcp@0.1.32"]
     }
   }
 }
@@ -149,7 +154,7 @@ the same first three steps in each.
 
 | # | Challenge | Status |
 |---|---|---|
-| 01 | [GN container holder](challenges/01-gn-holder/README.md): 3D-printable, parametric holder for gastronorm pans. [Requirements](challenges/01-gn-holder/REQUIREMENTS.md) | v1 (flat frame) built in OpenSCAD, SolidCraft and Onshape FeatureScript, [comparison](challenges/01-gn-holder/LOG.md); v2 (tilted rack) open |
+| 01 | [GN container holder](challenges/01-gn-holder/README.md): 3D-printable, parametric holder for gastronorm pans. [Requirements](challenges/01-gn-holder/REQUIREMENTS.md) | v1 (flat frame) built in OpenSCAD, SolidCraft, Onshape FeatureScript and FreeCAD, [comparison](challenges/01-gn-holder/LOG.md); v2 (tilted rack) open |
 
 ## Next steps
 

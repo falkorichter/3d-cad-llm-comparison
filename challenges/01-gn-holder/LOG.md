@@ -79,3 +79,32 @@
 
 Both say the long rails will sag under a full pan, and neither has been printed. The tolerances are guesses.
 - [ ] v2 brief from REQUIREMENTS.md §3 (tilted rack), then rebuild.
+
+## 2026-11-25
+
+- **FreeCAD v1 done** through the community MCP [neka-nat/freecad-mcp](https://github.com/neka-nat/freecad-mcp) 0.1.32
+  (FreeCAD 1.1.4; setup in [../../docs/freecad-mcp/LOG.md](../../docs/freecad-mcp/LOG.md)). Claude Code in the main
+  session, no agent. Details in [freecad/NOTES.md](freecad/NOTES.md).
+  - Approach: one Python script (`freecad/gn_holder.py`) sent through `execute_code`. It builds a **parametric
+    document**: spreadsheet `Params` + 131 Part features whose sizes and positions are expressions. Parts are split
+    as `Common(frame, region box)`, like OpenSCAD. Same joints as SolidCraft/Onshape (M4 splice plates + inserts).
+  - 18 parts, all fit 256 × 256 (dividers diagonally). Measured outer 552 × 347, opening 532 × 327, hole 516 × 311,
+    clearance 165. **Frame 557 707.7 mm³ = hand calculation, middle rail 79 311.5 = hand calculation.** 0 overlaps.
+    GN 2/3, `max_depth` = 100 and the seat flags rebuild cleanly.
+  - ~4 min tool time, **8 FreeCAD MCP calls**, 2 corrections: `clear` is a reserved word in FreeCAD expressions (alias
+    renamed to `clearance`), and one wrong camera angle on a render.
+  - STEP + STL + `.FCStd`. The same script also runs headless with `freecadcmd` (~1 s), so it can run in CI.
+
+| | OpenSCAD | SolidCraft (MCP) | Onshape FeatureScript (MCP) | FreeCAD (community MCP) |
+|---|---|---|---|---|
+| Time | ~15 min | ~15 min | ~20 min (+10 notes) | ~4 min tool time (+ script writing) |
+| Tool calls | ~42 | ~56 | 11 to Onshape + ~10 local | 8 to FreeCAD + ~10 local |
+| Corrections | 4 | 2 | 1 | 2 (`clear` reserved, render angle) |
+| Model lives in | `.scad` file | `.sc` file | Onshape cloud + `.fs` copy | `.FCStd` (parametric) + `.py` that builds it |
+| STEP | no | yes | yes, via web export | yes, built in |
+| Verified by | own scripts | `measure`, `body_topology` | `println` in the feature | own Python (`Volume`, `BoundBox`, `common`) in FreeCAD |
+| Sees the result | renders | screenshots | no | **yes**: screenshot with every `execute_code` |
+| Runs headless / CI | yes | yes (`solidcraft-cli`) | no | yes (`freecadcmd`) |
+
+Caveat: FreeCAD was built last, by the main session, with the three earlier builds (and their pitfalls, like where
+the seats go and the solid ledge) already known. That makes it faster; it's not a fair race on time.
