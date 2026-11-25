@@ -108,3 +108,7 @@ Both say the long rails will sag under a full pan, and neither has been printed.
 
 Caveat: FreeCAD was built last, by the main session, with the three earlier builds (and their pitfalls, like where
 the seats go and the solid ledge) already known. That makes it faster; it's not a fair race on time.
+- Pushed (`ad2e408`) and wrote it up as an update on the ifsmb.de project page "Recherche: KI-Tools für CAD mit
+  OpenSCAD": [ifsmb.de PR #254](https://github.com/falkorichter/ifsmb.de/pull/254) (German, with the FreeCAD render).
+  Pushing over SSH failed from Claude Code ("Permission denied (publickey)"), so both pushes went over HTTPS with the
+  `gh` login as the credential helper, passed per command through `GIT_CONFIG_*`, without changing the git config.
